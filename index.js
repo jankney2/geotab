@@ -1,13 +1,15 @@
-const express=require('express')
+const express = require("express");
 
-require('dotenv').config()
-
-const {PORT}=process.env
-
-const app=express()
+require("dotenv").config();
 
 
+const { PORT } = process.env;
+const app = express();
 
-app.listen(PORT, ()=>{
-    console.log('server listening on', PORT)
-})
+const {breadcrumb}=require('./funcs')
+
+
+app.listen(PORT, () => {
+  console.log("server listening on", PORT);
+//   breadcrumb()
+});
