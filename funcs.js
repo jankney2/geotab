@@ -3,7 +3,6 @@ const axios = require("axios");
 const GeotabApi = require("mg-api-js");
 const { GT_E, GT_P, GT_DB, GT_SERV } = process.env;
 
-
 //this is the POC- can we get the user and breadcrumb information. See MULTICALL on https://github.com/Geotab/mg-api-js
 
 const breadcrumb = async () => {
@@ -29,7 +28,7 @@ const breadcrumb = async () => {
             search: {
               toDate: new Date().toISOString(),
               fromDate: new Date(
-                new Date().getTime() - 7 * 24 * 60 * 60 * 1000
+                new Date().getTime() - 2 * 24 * 60 * 60 * 1000
               ).toISOString()
             }
           },
@@ -46,13 +45,45 @@ const breadcrumb = async () => {
   })();
 
   feed.next(function(trips) {
-    console.log("First part: ", trips);
+    //this is probably where you'd do the db Add
+    console.log("First part: ", trips.length);
     feed.next(function(trips) {
-      console.log(trips, "Second part")
+      console.log(trips.length, "Second part");
     });
   });
 };
 
+const users = async () => {
+  const api = await new GeotabApi({
+    credentials: {
+      database: GT_DB,
+      userName: GT_E,
+      password: GT_P
+    },
+    path: `https://${GT_SERV}.geotab.com`
+  });
+
+  api.call(
+    "Get",
+    {
+      typeName: "User"
+    },
+    function(result) {
+      if (result !== null && result.length > 0) {
+        console.log(result.length, "user result");
+
+        for(let i=0;i<result.length;i++){
+            console.log(result[i].name)
+        }
+      }
+    }, 
+    function(error){
+        console.log(error, 'user call error')
+    }
+  );
+};
+
 module.exports = {
-  breadcrumb
+  breadcrumb, 
+  users
 };
